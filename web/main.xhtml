@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Web Development 3</title>
+    <link rel="stylesheet" href="static/styles/index.css"/>
+</h:head>
+<h:body>
+    <div class="header">Лабораторная работа №3. Щербаков В.Ю. P3214. Вариант 40156.
+         <span class="user-name">Вы вошли как #{checker.userNameBean.name.toString()}</span>
+    </div>
+    <div class="Wrapper">
+        <div class="leftsidebar">
+        </div>
+        <div class="Top">
+            ПОПАДАЕТ ЛИ ТВОЯ ТОЧКА В ЭТОТ ГРАФИК?
+        </div>
+    </div>
+    <div class="Wrapper2">
+    <div class="leftsidebar2">
+    </div>
+    <div class="main">
+        <h:form id="main-form">
+            <div class="step">
+            <p>Шаг первый - выберите X.</p><br/>
+                <p:inputText id="x" value="#{checker.x}" required="true" requiredMessage="Поле является пустым"
+                             validatorMessage="Число должно быть от -3 до 3" converterMessage="Введено не число" placeholder="от -3 до 3">
+                    <f:validateDoubleRange minimum="-3.0" maximum="3.0" />
+                    <f:ajax event="keyup" render="errX submit"/>
+                </p:inputText><br/>
+                <h:message for="x" id="errX" styleClass="warn"/>
+            </div>
+            <div class="step">
+            <p>Шаг второй - выберите Y.</p><br/>
+                <p:inputText id="y" value="#{checker.y}" required="true" requiredMessage="Поле является пустым"
+                             validatorMessage="Число должно быть от -3 до 3" converterMessage="Введено не число" placeholder="от -3 до 3">
+                    <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
+                    <f:ajax event="keyup" render="errY submit"/>
+                </p:inputText><br/>
+                <h:message for="y" styleClass="warn" id="errY"/>
+            </div>
+            <div class="step">
+            <p>Шаг третий - выберите радиус.</p><br/>
+                <p:selectOneMenu id="r" value="#{checker.r}" required="true" styleClass="r-button" style="width: 100px"
+                                  requiredMessage="Не отмечено ни одного элемента" onchange="handleRChange(event)">
+                    <f:selectItem itemValue="1.0" itemLabel="1"/>
+                    <f:selectItem itemValue="2.0" itemLabel="2"/>
+                    <f:selectItem itemValue="3.0" itemLabel="3"/>
+                    <f:selectItem itemValue="4.0" itemLabel="4"/>
+                    <f:selectItem itemValue="5.0" itemLabel="5"/>
+                    <f:ajax event="change" render="r submit"/>
+                </p:selectOneMenu>
+                <h:message for="r" styleClass="warn"/><br/>
+            </div>
+            <p:commandButton id="submit" styleClass="submit-button" action="#{checker.check}" style="height: 40px; margin-top: 10px; margin-bottom: 10px; font-size: 14px; font-weight: normal; color: black;"
+                             value="Проверить" disabled="#{!checker.ready}"
+                             update="table-form:result-table x errX errY" oncomplete="handleSubmit()"/>
+        </h:form>
+        <div class="history-block">
+        <span class="table-text">Результаты</span>
+            <h:form>
+                <h:commandButton styleClass="history-button" action="GoToIndex" value="Стартовая страница">
+                    <f:actionListener binding="#{name.clear()}"/>
+                </h:commandButton>
+            </h:form>
+        <h:form id="table-form">
+            <h:dataTable value="#{data.points}" id="result-table" var="p" styleClass="result-table">
+                <h:column>
+                    <f:facet name="header">
+                        Координата X
+                    </f:facet>
+                    <h:panelGroup rendered="#{!p.edit}">
+                        #{p.x}
+                    </h:panelGroup>
+                    <p:inputText rendered="#{p.edit}" value="#{p.xEdit}" styleClass="change-input" required="true">
+                        <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
+                    </p:inputText>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Координата Y
+                    </f:facet>
+                    <h:panelGroup rendered="#{!p.edit}">
+                        #{p.y}
+                    </h:panelGroup>
+                    <p:inputText rendered="#{p.edit}" value="#{p.yEdit}" styleClass="change-input" required="true">
+                        <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
+                    </p:inputText>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Радиус R
+                    </f:facet>
+                    #{p.r}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Попадание
+                    </f:facet>
+                    #{p.isCheck}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Дата и время запроса
+                    </f:facet>
+                    #{p.date}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Редактировать
+                    </f:facet>
+                    <h:commandButton styleClass="table-change-button" action="#{p.reverseEdit()}"
+                                     rendered="#{!p.edit}" value="Редактировать" disabled="#{!p.owner.equals(name.name)}" update="table-form"/>
+                    <h:commandButton styleClass="table-change-button" action="#{data.updatePoint(p)}"
+                                     rendered="#{p.edit}" value="Сохранить" disabled="#{!p.owner.equals(name.name)}" update="table-form" oncomplete="handleSubmit()"/>
+                </h:column>
+            </h:dataTable>
+        </h:form>
+        </div>
+    </div>
+        <div class="rightsidebar">
+            <div class="canvas-container">
+                    <h:form id="canvas-form">
+                        <h:inputHidden id="xCanvas" value="#{checker.xCanvas}"/>
+                        <h:inputHidden id="yCanvas" value="#{checker.yCanvas}"/>
+                        <canvas id="canvas" width="300px" height="300px" onclick="handleCanvasClick(event)"/>
+                        <p:remoteCommand name="checkCanvas" action="#{checker.canvasCheck}"
+                                         update="table-form:result-table beanData" oncomplete="drawPoint(xBean, yBean, resBean==='Да'? 'lime' : 'red');"/>
+                        <p:remoteCommand name="checkResize" action="#{checker.resizeCheck}" update="beanData"
+                                         oncomplete="drawPoint(xBean, yBean, resBean==='Да'? 'lime' : 'red'); drawStep()"/>
+                        <h:panelGroup id="beanData">
+                            <script type="text/javascript">xBean = '#{checker.xCanvas}'; yBean = '#{checker.yCanvas}'; resBean = '#{checker.resizeResult}'</script>
+                        </h:panelGroup>
+                    </h:form>
+            </div>
+        </div>
+    </div>
+    <div class="footer">Copyright &copy;ItmoLabs all rights were broken</div>
+    <script src="static/scripts/drawing.js" type="text/javascript"></script>
+    <script src="static/scripts/main.js" type="text/javascript"></script>
+</h:body>
+</html>

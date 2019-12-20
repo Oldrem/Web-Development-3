@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+   <title>Welcome Page</title>
+   <link rel="stylesheet" href="static/styles/index.css"/>
+</h:head>
+<h:body>
+   <div class="header">Лабораторная работа №1.
+    Щербаков В.Ю. P3214. <span class="variant"> Вариант 214023.</span>
+    </div>
+    <div class="Top-Welcome">
+        Добро пожаловать!
+    </div>
+   <div class="main-welcome">
+       <div id="time-container"> </div>
+       <script src="static/scripts/clock.js" type="text/javascript"></script>
+       <h:form class="login-form">
+           <span class="login">Введите ваш логин:</span><br/>
+           <p:inputText required="true" style="width: 200px; height:50px; font-size: 20px;" placeholder="Логин" requiredMessage="Поле обязательно для заполнения" id="name" value="#{name.name}"/>
+          <br/><br/>
+           <h:commandButton styleClass="table-change-button" style="width: 200px; height: 50px; font-size: 20px;" action="GoToSite" value="Войти на сайт"/>
+       </h:form>
+   </div>
+</h:body>
+</html>
